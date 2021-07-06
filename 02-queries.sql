@@ -86,7 +86,9 @@ BEGIN
     RAISE NOTICE '%', 'count: ' || counter;
 end; $$
 
-
+-- NEW SOLUTION FOR TASK 5: ADDED AFTER SUBMISSION; LEVERAGES THE NEW SCHEMA OF MESSAGES TABLE --------
+ SELECT ancestor_length FROM messages WHERE messages.id = 7;
+-------------------------------------------------------------------------------------------------------
 
 -- 6. What is the maximum quote chain length?
 --     - Your query should return a table with columns (`message_id`, `count`) where message_id is the id of the message which is quoting all the others
@@ -118,3 +120,9 @@ SELECT * from (SELECT message_id
 FROM rec
 WHERE msg_chain IS NOT NULL
 ORDER BY 2 DESC) as CHAIN_TRACE fetch first row only;
+
+-- NEW SOLUTION FOR TASK 6: ADDED AFTER SUBMISSION; LEVERAGES THE NEW SCHEMA OF MESSAGES TABLE --
+ SELECT messages.id AS message_id, ancestor_length AS count
+ FROM messages
+ WHERE ancestor_length = ( SELECT MAX(ancestor_length) FROM messages) FETCH NEXT 1 ROWS ONLY ;
+-------------------------------------------------------------------------------------------------

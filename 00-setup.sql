@@ -37,3 +37,36 @@ CREATE TABLE messages (
   ip VARCHAR(39) NOT NULL
 );
 
+
+-------------------------------------------------------------------------------------
+-- The following edits have been made after submission.
+-- The goal of these is to elaborate upon the `todo` items in the original submission
+------------------------------------------------------------------------------------
+
+-- This column keeps track of the quote chain length for C where A .. C
+ALTER TABLE messages ADD COLUMN ancestor_length INTEGER DEFAULT 0;
+
+-- Add a trigger function to update ancestor_length upon insert
+CREATE OR REPLACE FUNCTION calculate_message_chain_length()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    l_ancestor_message_length INTEGER;
+BEGIN
+    IF NEW.quoted_message_id = 0 THEN
+         NEW.ancestor_length := 0;
+    ELSE
+    SELECT ancestor_length INTO l_ancestor_message_length FROM messages WHERE messages.id = NEW.quoted_message_id;
+    l_ancestor_message_length := l_ancestor_message_length + 1;
+    NEW.ancestor_length := l_ancestor_message_length;
+
+    END IF;
+    RETURN NEW;
+END; $$;
+
+
+CREATE TRIGGER messages_ancestor_length
+BEFORE INSERT ON messages
+FOR EACH ROW
+EXECUTE PROCEDURE calculate_message_chain_length();
