@@ -14,7 +14,7 @@ Users first need to connect using their username and password, then join a room.
 
 The PostgreSQL database does not keep track of what room users are in or if users are currently connected or not. It only serves as a persistent storage for users, rooms and messages for when the server goes down.
 
-The schema of the database is available in `00-setup.sql`. It is also represented visually below:
+The schema of the database is available in `00-setup-00-ddl.sql`. It is also represented visually below:
 
 ![schema](./doc/schema.png "Schema")
 
@@ -53,7 +53,7 @@ The following queries should be written in the `02-queries.sql` file:
 Feel free to add comments in the sql files if you think this is necessary to understand your reasoning.
 
 
-The following modifications should be implemented in the `00-setup.sql` file:
+The following modifications should be implemented in the `00-setup-00-ddl.sql` file:
 ```sql
 -- 7. Modify the database schema in order to improve the performance of all the queries in 02-queries.sql
 --     - You can modify the database schema as you wish as long as the queries are executed properly by PostgreSQL 9.3.
@@ -72,7 +72,7 @@ Your queries will also be tested with other data sets (different `01-populate.sq
 
 In order to debug the queries you have to implement, it is recommended to use [SQLFiddle](http://sqlfiddle.com/#!15) in order to avoid setting up a local PostgreSQL database.
 
-Put the content of the `00-setup.sql` and `01-populate.sql` files on the left panel, then press `Build Schema` to setup the database. Then, use the right panel to write and run queries.
+Put the content of the `00-setup-00-ddl.sql` and `01-populate.sql` files on the left panel, then press `Build Schema` to setup the database. Then, use the right panel to write and run queries.
 
 ### Ranking
 

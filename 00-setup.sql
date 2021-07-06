@@ -24,3 +24,4 @@ CREATE TABLE messages (
   content VARCHAR NOT NULL,
   ip VARCHAR(39) NOT NULL
 );
+

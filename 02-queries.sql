@@ -6,7 +6,7 @@ SELECT user_id
 , COUNT(*)
 FROM messages
 WHERE room_id = 1
-GROUP BY 1
+GROUP BY user_id
 ORDER BY 2 DESC
 LIMIT 1;
 
@@ -16,13 +16,13 @@ LIMIT 1;
 --     - Your query should return at most 1 row
 SELECT m.room_id
 , r.name AS room_name
-, COUNT(*)
+, COUNT(*) AS count
 FROM messages AS m
 JOIN rooms AS r
 ON r.id = m.room_id
 WHERE user_id = 1
-GROUP BY 1, 2
-ORDER BY 3 DESC
+GROUP BY room_id, room_name
+ORDER BY count DESC
 LIMIT 1;
 
 
@@ -44,7 +44,7 @@ JOIN rooms AS r2
 ON r2.id = m2.room_id
 -- Filter only to rows where message and quoted message are from different rooms
 WHERE r1.id != r2.id
-ORDER BY 1 DESC;
+ORDER BY message_id DESC;
 
 
 -- 4. For each user, display the number of different ips he used
@@ -58,8 +58,8 @@ FROM (
   UNION -- No ALL as we want unique IP counts per user
   SELECT id AS user_id, ip FROM users
 ) AS ip_union
-GROUP BY 1
-ORDER BY 1;
+GROUP BY user_id
+ORDER BY user_id;
 
 
 -- 5. How long is the quote chain for message 7 (message whose id is 7)?
@@ -82,6 +82,8 @@ WITH RECURSIVE rec AS
 -- (A --> B --> C == 2)
 SELECT COUNT(*) -1 AS count
 FROM rec;
+
+
 
 
 -- 6. What is the maximum quote chain length?
@@ -107,9 +109,9 @@ WITH RECURSIVE rec AS
 )
 -- Subtract one from count to follow chain length convention
 -- (A --> B --> C == 2)
-SELECT message_id
+SELECT * from (SELECT message_id
 -- Count the commas to determine chain length
 , CHAR_LENGTH(msg_chain)-CHAR_LENGTH(REPLACE(msg_chain, ',', ''))+1 AS count
 FROM rec
 WHERE msg_chain IS NOT NULL
-ORDER BY 2 DESC
+ORDER BY 2 DESC) as CHAIN_TRACE fetch first row only;
