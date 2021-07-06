@@ -67,37 +67,23 @@ ORDER BY user_id;
 --     - Your query should return a table with a single column named `count`
 --     - Your query should return at most 1 row
 
--- Using a Recursive Common Table Expression to determine full length of quote chain
-WITH RECURSIVE rec AS
-(
-  -- Non-recursive statement starting the chain at message 7
-  SELECT id FROM messages where id = 7
-  UNION
-  -- Recursive statement unioning all messages in the quote chain
-  SELECT messages.id
-  FROM rec, messages
-  WHERE messages.quoted_message_id = rec.id
-)
--- Subtract one from count to follow chain length convention
--- (A --> B --> C == 2)
-SELECT COUNT(*) -1 AS count
-FROM rec;
+-- TODO: Incorrect o/p. Need to convert the blocks' logic to query.
 
-do $$
-declare
-   m_id integer := 7;
-   q_id integer := 0;
-   counter integer := 0;
-begin
-    select quoted_message_id into q_id from messages where messages.id = m_id;
-	loop
-		exit when q_id = 0 ;
+DO $$
+DECLARE
+   m_id INTEGER := 7;
+   q_id INTEGER := 0;
+   counter INTEGER := 0;
+BEGIN
+    SELECT quoted_message_id INTO q_id FROM messages WHERE messages.id = m_id;
+	LOOP
+		EXIT WHEN q_id = 0 ;
 		counter := counter + 1 ;
-		select quoted_message_id into q_id from messages where messages.id = m_id;
+		SELECT quoted_message_id INTO q_id FROM messages WHERE messages.id = m_id;
 		m_id = q_id;
-	end loop;
---     select counter;
-    raise notice '%', counter;
+	END LOOP;
+--     WITH chain_length_count (count) AS ( values (counter)) SELECT count from chain_length_count;
+    RAISE NOTICE '%', 'count: ' || counter;
 end; $$
 
 
@@ -106,6 +92,7 @@ end; $$
 --     - Your query should return a table with columns (`message_id`, `count`) where message_id is the id of the message which is quoting all the others
 --     - Your query should return at most 1 row
 
+-- TODO: fix later: Would not work for branched chains.
 WITH RECURSIVE rec AS
 (
   -- Non-recursive statement starting the chain at top/ancestor messages
