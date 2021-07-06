@@ -83,6 +83,22 @@ WITH RECURSIVE rec AS
 SELECT COUNT(*) -1 AS count
 FROM rec;
 
+do $$
+declare
+   m_id integer := 7;
+   q_id integer := 0;
+   counter integer := 0;
+begin
+    select quoted_message_id into q_id from messages where messages.id = m_id;
+	loop
+		exit when q_id = 0 ;
+		counter := counter + 1 ;
+		select quoted_message_id into q_id from messages where messages.id = m_id;
+		m_id = q_id;
+	end loop;
+--     select counter;
+    raise notice '%', counter;
+end; $$
 
 
 
